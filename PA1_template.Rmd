@@ -9,9 +9,48 @@ output:
 ## Loading and preprocessing the data
 
 
+```{r}
+
+#  We check if we have the Dataset for the course project
+#  otherwise We download the ZIP file and unZIP it at the working Directory
+
+if (!file.exists("activity.csv")) {
+  fileUrl <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+  download.file(fileUrl, destfile = "./activity.zip")
+  unzip("activity.zip")
+}
+  activity <- read.csv("activity.csv",sep=",")
+```
+
 
 ## What is mean total number of steps taken per day?
 
+```{r, echo = TRUE,  message=F, warning=F}
+
+library(dplyr)
+library(ggplot2)
+
+## We calculate the total of steps by day
+total_steps_by_day <- summarise(group_by(activity,date), total_steps=sum(steps))
+
+## We make a histogram of the steps by day
+g <- qplot(date,total_steps,data=total_steps_by_day,  ylab="Steps by day")
+g <- g + geom_bar(stat="identity", fill="red")
+g <- g + labs(title="Total number of steps taken each day")
+print(g)
+
+
+## We calculate the mean and the mediant
+
+
+mean_steps <- mean(total_steps_by_day$total_steps, na.rm=TRUE)
+median_steps <- median(total_steps_by_day$total_steps, na.rm=TRUE)
+```
+
+
+The mean steps taken per day is  **`r  mean_steps`**
+
+The median steps taken per day is  **`r median_steps`**
 
 
 ## What is the average daily activity pattern?
